@@ -1,6 +1,5 @@
 const gifsPerPage = 6;
 let currentPage = 1;
-
 const gifs = [
     "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
     "https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif",
@@ -14,14 +13,19 @@ const gifs = [
     "https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif"
 ];
 
+const memo = {};
+
 function showPage(page) {
-    const start = (page - 1) * gifsPerPage;
-    const end = start + gifsPerPage;
-    const gifsToShow = gifs.slice(start, end);
+    if (!memo[page]) {
+        const start = (page - 1) * gifsPerPage;
+        const end = start + gifsPerPage;
+        const gifsToShow = gifs.slice(start, end);
+        memo[page] = gifsToShow;
+    }
 
     const gifContainer = document.getElementById('gif-container');
     gifContainer.innerHTML = '';
-    gifsToShow.forEach(gif => {
+    memo[page].forEach(gif => {
         const img = document.createElement('img');
         img.src = gif;
         gifContainer.appendChild(img);
@@ -29,7 +33,7 @@ function showPage(page) {
 
     document.getElementById('page-info').innerText = `Page ${page}`;
     document.getElementById('prev').disabled = page === 1;
-    document.getElementById('next').disabled = end >= gifs.length;
+    document.getElementById('next').disabled = page * gifsPerPage >= gifs.length;
 }
 
 document.getElementById('prev').addEventListener('click', () => {
